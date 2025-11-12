@@ -55,7 +55,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/koumeil/template-clean-architecture:latest
-            ghcr.io/koumeil/template-clean-architecture:${{ github.sha }}
+            ghcr.io/koumeil/eshop:latest
+            ghcr.io/koumeil/eshop:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
