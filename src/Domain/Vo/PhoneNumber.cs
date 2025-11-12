@@ -1,4 +1,4 @@
-using Domain.Errors;
+using Domain.DomainExceptions;
 
 namespace Domain.Vo;
 public sealed record PhoneNumber

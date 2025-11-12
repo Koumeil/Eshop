@@ -1,8 +1,8 @@
 ﻿using Application.ApplicationExceptions;
 using Application.Dtos;
 using Application.Interfaces;
+using Domain.DomainExceptions;
 using Domain.Entities;
-using Domain.Errors;
 using Domain.Interfaces;
 using Domain.Vo;
 
