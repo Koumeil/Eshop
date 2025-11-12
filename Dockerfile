@@ -2,20 +2,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /source
 
-# Copy project files FROM src directory
+# Copy solution and project files
+COPY ["CleanArchitecture.sln", "."]
+COPY ["Directory.Build.props", "."]  # ⬅️ COPIEZ LE FICHIER ICI AVANT RESTORE
 COPY ["src/API/API.csproj", "src/API/"]
 COPY ["src/Application/Application.csproj", "src/Application/"]
 COPY ["src/Domain/Domain.csproj", "src/Domain/"]
 COPY ["src/Infrastructure/Infrastructure.csproj", "src/Infrastructure/"]
 COPY ["src/Tests/Tests.csproj", "src/Tests/"]
-COPY ["CleanArchitecture.sln", "."]
 
-# Restore dependencies
+# Restore dependencies (avec Directory.Build.props disponible)
 RUN dotnet restore
 
 # Copy everything else and build
 COPY . .
-RUN dotnet build --configuration Release --no-restore
+RUN dotnet build --configuration Release --no-restore /p:GenerateAssemblyInfo=false
 RUN dotnet test --configuration Release --no-build --verbosity normal
 
 # Publish
