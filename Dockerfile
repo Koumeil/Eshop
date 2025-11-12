@@ -4,7 +4,7 @@ WORKDIR /source
 
 # Copy solution and project files
 COPY ["CleanArchitecture.sln", "."]
-COPY ["Directory.Build.props", "."]  # ⬅️ COPIEZ LE FICHIER ICI AVANT RESTORE
+COPY ["Directory.Build.props", "."]
 COPY ["src/API/API.csproj", "src/API/"]
 COPY ["src/Application/Application.csproj", "src/Application/"]
 COPY ["src/Domain/Domain.csproj", "src/Domain/"]
