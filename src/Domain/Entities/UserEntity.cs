@@ -1,5 +1,6 @@
 ﻿using Domain.DomainExceptions;
 using Domain.Vo;
+using System;
 
 namespace Domain.Entities;
 
@@ -11,7 +12,7 @@ public sealed class UserEntity : BaseEntity
     #endregion
 
     #region Properties
-    public string FirstName { get; private set; }
+    public  string FirstName { get; private set; }
     public string LastName { get; private set; }
     public EmailAddress Email { get; private set; }
     public Address Address { get; private set; }
@@ -40,9 +41,14 @@ public sealed class UserEntity : BaseEntity
         Role = Role.User;
     }
 
-    protected UserEntity()
+    private UserEntity()
     {
-
+        FirstName = string.Empty;
+        LastName = string.Empty;
+        Email = null!;
+        PhoneNumber = null!;
+        Address = null!;
+        Password = null!;
     }
     #endregion
 

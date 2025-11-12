@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <!-- Build centralisé dans build/NomProjet/bin et obj -->
+    <BaseOutputPath>$(SolutionDir)build\$(MSBuildProjectName)\bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)build\$(MSBuildProjectName)\obj\</BaseIntermediateOutputPath>
+    
+    <!-- Empêcher la génération automatique des AssemblyInfo -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+  </PropertyGroup>
+</Project>
