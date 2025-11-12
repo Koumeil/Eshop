@@ -8,6 +8,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       packages: write
     steps:
       - uses: actions/checkout@v4
@@ -20,6 +21,13 @@ jobs:
           
       - name: Publish
         run: dotnet publish src/API/API.csproj -c Release -o publish
+        
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Build & Push Docker
         uses: docker/build-push-action@v5
