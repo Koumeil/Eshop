@@ -6,6 +6,12 @@
 # dotenv files
 .env
 
+# Ignorer tous les certificats .crt et .key dans tout le projet
+*.crt
+*.key
+
+
+
 # User-specific files
 *.rsuser
 *.suo

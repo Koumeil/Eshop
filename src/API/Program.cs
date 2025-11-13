@@ -2,7 +2,6 @@ using API.Middleware;
 using Application;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +36,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 app.UseAuthorization();
 
