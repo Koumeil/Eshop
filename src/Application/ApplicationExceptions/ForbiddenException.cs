@@ -1,6 +1,5 @@
 ﻿namespace Application.ApplicationExceptions;
 
-// 4. ForbiddenException.cs
 public sealed class ForbiddenException : ApplicationExceptionBase
 {
     public override int StatusCode => 403;

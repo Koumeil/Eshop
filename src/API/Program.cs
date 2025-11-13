@@ -75,7 +75,7 @@ try
         {
             Title = "API",
             Version = "v1",
-            Description = "E-Shop API is an online E-store using Clean Architecture, Domain Drive-Design and MediatR. Manages your products, customers, orders, payments etc.."
+            Description = "E-Shop"
         });
 
         var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -106,7 +106,7 @@ try
     Console.WriteLine("✅ Application built successfully");
 
     // ---------------------
-    // Database migrations (AUTO-CREATION)
+    // Database migrations (AUTO)
     // ---------------------
     Console.WriteLine("=== DATABASE SETUP (AUTO-CREATION) ===");
     
@@ -118,7 +118,7 @@ try
 
         Console.WriteLine("=== Testing database connection ===");
         
-        // Essayer de se connecter et créer la DB si elle n'existe pas
+        // Try to connect and create DB if no exist
         var retryCount = 0;
         const int maxRetries = 3;
 
@@ -128,16 +128,16 @@ try
             {
                 Console.WriteLine($"🔄 Database connection attempt {retryCount + 1}/{maxRetries}");
                 
-                // Cette méthode va créer la DB si elle n'existe pas
+                // If DB no exist => create DB
                 await db.Database.MigrateAsync();
                 Console.WriteLine("✅ Database migrated/created successfully");
                 
-                // Vérifier si des données de seed sont nécessaires
+                // Check if need data seeds 
                 Console.WriteLine("=== Checking for seed data ===");
                 await Infrastructure.Seeds.UserSeeder.SeedUsersAsync(db);
                 Console.WriteLine("✅ Seed data applied successfully");
                 
-                break; // Succès, sortir de la boucle
+                break; // Success
             }
             catch (Npgsql.PostgresException ex) when (ex.SqlState == "3D000") // Database doesn't exist
             {
@@ -176,7 +176,6 @@ try
     {
         Console.WriteLine($"⚠️  Database setup error: {ex.Message}");
         Console.WriteLine("ℹ️  Application will start without database initialization");
-        // Ne pas throw - laisser l'application démarrer
     }
 
     Console.WriteLine("✅ DATABASE SETUP COMPLETED");

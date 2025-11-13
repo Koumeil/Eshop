@@ -20,14 +20,13 @@ public sealed record EmailAddress
 
         var trimmed = email.Trim();
         
-        // Validation  (RFC 5321)
+        // (RFC 5321)
         if (trimmed.Length > 254)
             throw new DomainValidationException("Email cannot exceed 254 characters.");
             
         if (trimmed.Length < 3)
             throw new DomainValidationException("Email must be at least 3 characters.");
 
-        // Validation format avec timeout
         try
         {
             if (!EmailRegex.IsMatch(trimmed))

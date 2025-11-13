@@ -1,6 +1,5 @@
 ﻿namespace Application.ApplicationExceptions;
 
-// 2. ValidationException.cs
 public sealed class ValidationException : ApplicationExceptionBase
 {
     public override int StatusCode => 400;

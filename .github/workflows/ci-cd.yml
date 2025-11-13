@@ -13,7 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Décode le certificat depuis le secret GitHub
       - name: Setup HTTPS certificate
         run: echo "${{ secrets.DOTNET_CERT_PFX }}" | base64 -d > aspnetapp.pfx
 

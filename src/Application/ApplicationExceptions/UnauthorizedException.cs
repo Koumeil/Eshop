@@ -1,6 +1,5 @@
 ﻿namespace Application.ApplicationExceptions;
 
-// 3. UnauthorizedException.cs
 public sealed class UnauthorizedException : ApplicationExceptionBase
 {
     public override int StatusCode => 401;

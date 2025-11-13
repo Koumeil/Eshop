@@ -12,16 +12,15 @@ public static class UserSeeder
         if (await dbContext.Users.AnyAsync())
             return;
 
-        // Essayer plusieurs chemins possibles pour trouver le fichier
         var possiblePaths = new[]
         {
-            // Chemin dans l'environnement de développement (en dehors de Docker)
+            // env dev (out of Docker)
             Path.Combine(Directory.GetCurrentDirectory(), "..", "Infrastructure", "Seeds", "userSeeds.json"),
-            // Chemin dans Docker après la publication
+            // in docker after publish
             Path.Combine(Directory.GetCurrentDirectory(), "Infrastructure", "Seeds", "userSeeds.json"),
-            // Chemin alternatif dans Docker
+            // alternativ in docker
             Path.Combine(Directory.GetCurrentDirectory(), "Seeds", "userSeeds.json"),
-            // Chemin absolu dans le conteneur
+            // absolu in the container
             "/app/Infrastructure/Seeds/userSeeds.json",
             "/app/Seeds/userSeeds.json"
         };
@@ -41,7 +40,7 @@ public static class UserSeeder
 
         if (string.IsNullOrEmpty(jsonData))
         {
-            // Logger tous les chemins essayés pour le débogage
+            // log all path for debog
             var triedPaths = string.Join(", ", possiblePaths);
             throw new FileNotFoundException($"Seed file not found. Tried paths: {triedPaths}");
         }

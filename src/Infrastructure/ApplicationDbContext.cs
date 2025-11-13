@@ -69,7 +69,7 @@ public class ApplicationDbContext : DbContext
                 .IsRequired();
 
 
-            //INDEXES 
+            //Indexes  Perf
             builder.HasIndex(u => u.Email).IsUnique();
             builder.HasIndex(u => u.PhoneNumber).IsUnique();
             builder.HasIndex(u => u.Role);

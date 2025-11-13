@@ -1,6 +1,5 @@
 ﻿namespace Application.ApplicationExceptions;
 
-// 6. ConflictException.cs
 public sealed class ConflictException : ApplicationExceptionBase
 {
     public override int StatusCode => 409;

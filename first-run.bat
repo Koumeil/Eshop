@@ -4,7 +4,7 @@ cls
 title 🔐 EShop - Configuration SSL Automatique
 
 :: ================================
-::      Titre Centré
+::      Title
 :: ================================
 echo.
 echo ================================================
@@ -152,5 +152,5 @@ echo 🔒 Plus d'avertissement "Non sécurisé" !
 echo.
 
 echo Fermeture automatique dans 5 secondes...
-timeout /t 5 /nobreak >nul
+timeout /t 10 /nobreak >nul
 exit

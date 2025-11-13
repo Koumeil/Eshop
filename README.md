@@ -236,5 +236,5 @@ docker-compose ps
 - Exécute first-run.bat pour l’ajouter au store de confiance Windows.
 
 
-### © 2025 – EShop | Clean Architecture & DDD | .NET 8 | Made with ❤️ by Koumeil
+### © 2025 – EShop Made with ❤️ by Koumeil
 
