@@ -5,7 +5,6 @@
   <img src="https://img.shields.io/badge/Container-GHCR.io-blue?logo=docker&style=flat-square" alt="GHCR">
   <img src="https://img.shields.io/badge/.NET-8.0-blueviolet?logo=dotnet&style=flat-square" alt=".NET 8">
   <img src="https://img.shields.io/github/license/koumeil/eshop?style=flat-square" alt="License">
-  <img src="https://img.shields.io/github/last-commit/koumeil/eshop?style=flat-square" alt="Last Commit">
 </p>
 
 
