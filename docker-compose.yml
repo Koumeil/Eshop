@@ -1,0 +1,51 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Database=eshop;Username=postgres;Password=postgres
+    depends_on:
+      - db
+    expose:
+      - "8080"  # exposé pour Nginx
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: eshop
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  cert-gen:
+    image: alpine:latest
+    container_name: cert-gen
+    working_dir: /certs
+    volumes:
+      - ./nginx/certs:/certs
+    command: >
+      sh -c "apk add --no-cache openssl && 
+             [ -f localhost.key ] || 
+             openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout localhost.key -out localhost.crt -subj '/CN=localhost'"
+
+  nginx:
+      image: nginx:latest
+      ports:
+        - "443:443"
+        - "80:80"   # Ajoutez le port HTTP
+      depends_on:
+        - api
+        - cert-gen
+      volumes:
+        - ./nginx/conf.d:/etc/nginx/conf.d
+        - ./nginx/certs:/etc/nginx/certs:ro
+      tty: true     # Garde le conteneur actif
+      stdin_open: true  # Permet l'interaction
+    
+volumes:
+  db_data:

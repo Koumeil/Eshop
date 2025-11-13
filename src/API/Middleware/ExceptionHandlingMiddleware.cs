@@ -58,8 +58,7 @@ public class ExceptionHandlingMiddleware
             Instance = context.Request.Path
         };
 
-        // Ajout du traceId pour debug serveur
-        problemDetails.Extensions["traceId"] = context.TraceIdentifier;
+        // problemDetails.Extensions["traceId"] = context.TraceIdentifier;
 
         context.Response.ContentType = "application/problem+json";
         context.Response.StatusCode = (int)status;
