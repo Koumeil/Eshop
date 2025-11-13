@@ -1,6 +1,6 @@
 # 🛍️ EShop - Documentation Technique
 
-<p align="center">
+<p align="start">
   <img src="https://img.shields.io/github/actions/workflow/status/koumeil/eshop/ci-cd.yml?branch=main&label=CI%2FCD&logo=github&style=flat-square" alt="GitHub Actions">
   <img src="https://img.shields.io/badge/Container-GHCR.io-blue?logo=docker&style=flat-square" alt="GHCR">
   <img src="https://img.shields.io/badge/.NET-8.0-blueviolet?logo=dotnet&style=flat-square" alt=".NET 8">
@@ -72,13 +72,13 @@ Eshop/
 ├── Dockerfile
 ├── init-ssl.sh
 └── first-run.bat
-
+```
 
 ### 🚀 Démarrage Rapide
 ## 🧩 Prérequis
 
-  # - 🐳 Docker Desktop (avec Docker Compose)
-  # - 🔑 Droits administrateur (pour la configuration SSL)
+- 🐳 Docker Desktop (avec Docker Compose)
+- 🔑 Droits administrateur (pour la configuration SSL)
 
 ### ⚡ Installation
 
@@ -112,10 +112,10 @@ first-run.bat
 ### ⚙️ Fonctionnalités Techniques
 ### 🧠 Initialisation Automatique
 
-✅ Migrations Base de Données (avec retry logic)
-✅ Peuplement via userSeeds.json
-✅ Certificat SSL auto-signé avec SAN
-✅ Health Checks intégrés
+- ✅ Migrations Base de Données (avec retry logic)
+- ✅ Peuplement via userSeeds.json
+- ✅ Certificat SSL auto-signé avec SAN
+- ✅ Health Checks intégrés
 
 
 ### 🔒 Sécurité
@@ -236,4 +236,6 @@ docker-compose ps
 ### 🔔 Note : Le certificat SSL étant auto-signé, les navigateurs afficheront un avertissement de sécurité.
 - Exécute first-run.bat pour l’ajouter au store de confiance Windows.
 
-© 2025 – EShop | Architecture .NET 8 | Made with ❤️ by Koumeil
+
+### © 2025 – EShop | Clean Architecture & DDD | .NET 8 | Made with ❤️ by Koumeil
+
