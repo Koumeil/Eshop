@@ -1,0 +1,112 @@
+[
+  {
+    "firstName": "Alice",
+    "lastName": "Martin",
+    "email": "alice.martin@example.com",
+    "phoneNumber": "+33612345678",
+    "password": "Password123!",
+    "street": "12 rue des Lilas",
+    "city": "Paris",
+    "postalCode": "75001",
+    "country": "France"
+  },
+  {
+    "firstName": "Bob",
+    "lastName": "Dupont",
+    "email": "bob.dupont@example.com",
+    "phoneNumber": "+33623456789",
+    "password": "Password123!",
+    "street": "34 avenue de la République",
+    "city": "Lyon",
+    "postalCode": "69001",
+    "country": "France"
+  },
+  {
+    "firstName": "Claire",
+    "lastName": "Bernard",
+    "email": "claire.bernard@example.com",
+    "phoneNumber": "+33634567890",
+    "password": "Password123!",
+    "street": "56 boulevard Saint-Germain",
+    "city": "Paris",
+    "postalCode": "75005",
+    "country": "France"
+  },
+  {
+    "firstName": "David",
+    "lastName": "Moreau",
+    "email": "david.moreau@example.com",
+    "phoneNumber": "+33645678901",
+    "password": "Password123!",
+    "street": "78 rue Lafayette",
+    "city": "Marseille",
+    "postalCode": "13001",
+    "country": "France"
+  },
+  {
+    "firstName": "Emma",
+    "lastName": "Petit",
+    "email": "emma.petit@example.com",
+    "phoneNumber": "+33656789012",
+    "password": "Password123!",
+    "street": "90 rue de Rivoli",
+    "city": "Paris",
+    "postalCode": "75004",
+    "country": "France"
+  },
+  {
+    "firstName": "François",
+    "lastName": "Lemoine",
+    "email": "francois.lemoine@example.com",
+    "phoneNumber": "+33667890123",
+    "password": "Password123!",
+    "street": "12 rue Victor Hugo",
+    "city": "Lille",
+    "postalCode": "59000",
+    "country": "France"
+  },
+  {
+    "firstName": "Gabrielle",
+    "lastName": "Roux",
+    "email": "gabrielle.roux@example.com",
+    "phoneNumber": "+33678901234",
+    "password": "Password123!",
+    "street": "34 avenue Jean Jaurès",
+    "city": "Toulouse",
+    "postalCode": "31000",
+    "country": "France"
+  },
+  {
+    "firstName": "Hugo",
+    "lastName": "Fournier",
+    "email": "hugo.fournier@example.com",
+    "phoneNumber": "+33689012345",
+    "password": "Password123!",
+    "street": "56 rue de la Paix",
+    "city": "Bordeaux",
+    "postalCode": "33000",
+    "country": "France"
+  },
+  {
+    "firstName": "Isabelle",
+    "lastName": "Girard",
+    "email": "isabelle.girard@example.com",
+    "phoneNumber": "+33690123456",
+    "password": "Password123!",
+    "street": "78 rue du Faubourg Saint-Antoine",
+    "city": "Paris",
+    "postalCode": "75011",
+    "country": "France"
+  },
+  {
+    "firstName": "Julien",
+    "lastName": "Clément",
+    "email": "julien.clement@example.com",
+    "phoneNumber": "+33611122233",
+    "password": "Password123!",
+    "street": "90 boulevard Haussmann",
+    "city": "Nice",
+    "postalCode": "06000",
+    "country": "France"
+  }
+]

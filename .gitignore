@@ -6,10 +6,15 @@
 # dotenv files
 .env
 
-# Ignorer tous les certificats .crt et .key dans tout le projet
+# Certificats SSL
+ssl-certs/
 *.crt
 *.key
+*.pfx
+*.pem
 
+# Dossier des certificats générés
+/https/
 
 
 # User-specific files

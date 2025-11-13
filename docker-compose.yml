@@ -1,51 +1,38 @@
 services:
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
+    ports:
+      - "7002:7002"  # HTTPS uniquement
     environment:
+      - ASPNETCORE_URLS=https://+:7002
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db;Database=eshop;Username=postgres;Password=postgres
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=eshop;Username=postgres;Password=password
     depends_on:
       - db
-    expose:
-      - "8080"  # exposé pour Nginx
+    # ✅ Volume optionnel pour inspecter les certificats
+    volumes:
+      - ./ssl-certs:/https:rw
+
+    # ✅ HEALTH CHECK 
+    healthcheck:
+      test: ["CMD", "stat", "/https/aspnetapp.crt"]  # Vérifie que le cert existe
+      interval: 3s
+      timeout: 2s
+      retries: 15
+      start_period: 5s
 
   db:
     image: postgres:16
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: eshop
-    volumes:
-      - db_data:/var/lib/postgresql/data
+      - POSTGRES_DB=eshop
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
     ports:
       - "5432:5432"
-
-  cert-gen:
-    image: alpine:latest
-    container_name: cert-gen
-    working_dir: /certs
     volumes:
-      - ./nginx/certs:/certs
-    command: >
-      sh -c "apk add --no-cache openssl && 
-             [ -f localhost.key ] || 
-             openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout localhost.key -out localhost.crt -subj '/CN=localhost'"
+      - postgres_data:/var/lib/postgresql/data
 
-  nginx:
-      image: nginx:latest
-      ports:
-        - "443:443"
-        - "80:80"   # Ajoutez le port HTTP
-      depends_on:
-        - api
-        - cert-gen
-      volumes:
-        - ./nginx/conf.d:/etc/nginx/conf.d
-        - ./nginx/certs:/etc/nginx/certs:ro
-      tty: true     # Garde le conteneur actif
-      stdin_open: true  # Permet l'interaction
-    
 volumes:
-  db_data:
+  postgres_data:

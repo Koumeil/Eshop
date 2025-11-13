@@ -12,23 +12,27 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      
+
+      # Décode le certificat depuis le secret GitHub
+      - name: Setup HTTPS certificate
+        run: echo "${{ secrets.DOTNET_CERT_PFX }}" | base64 -d > aspnetapp.pfx
+
       - name: Build & Test
         run: |
           dotnet restore
           dotnet build --no-restore
           dotnet test --no-build
-          
+
       - name: Publish
         run: dotnet publish src/API/API.csproj -c Release -o publish
-        
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-        
+
       - name: Build & Push Docker
         uses: docker/build-push-action@v5
         with:
@@ -36,3 +40,7 @@ jobs:
           tags: |
             ghcr.io/koumeil/eshop:latest
             ghcr.io/koumeil/eshop:${{ github.sha }}
+          secrets: |
+            dotnetcert=aspnetapp.pfx
+          build-args: |
+            DOTNET_CERT_PASSWORD=${{ secrets.DOTNET_CERT_PASSWORD }}

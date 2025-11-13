@@ -1,20 +1,34 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy project files first for better caching
 COPY ["src/API/API.csproj", "src/API/"]
 COPY ["src/Application/Application.csproj", "src/Application/"]
 COPY ["src/Domain/Domain.csproj", "src/Domain/"]
 COPY ["src/Infrastructure/Infrastructure.csproj", "src/Infrastructure/"]
+
 RUN dotnet restore "src/API/API.csproj"
 
-# Copy everything else and publish
 COPY . .
 RUN dotnet publish "src/API/API.csproj" -c Release -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
+
+# ✅ Installation des dépendances pour SSL
+RUN apt-get update && \
+    apt-get install -y ca-certificates openssl && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app .
-EXPOSE 8080
-ENV ASPNETCORE_URLS=http://+:8080
-ENTRYPOINT ["dotnet", "API.dll"]
+
+# ✅ COPIER LES FICHIERS DE SEEDS
+COPY --from=build /src/src/Infrastructure/Seeds/ ./Infrastructure/Seeds/
+
+# ✅ Copier seulement init-ssl.sh
+COPY init-ssl.sh .
+RUN chmod +x init-ssl.sh
+
+EXPOSE 7002
+
+# ✅ Commande en une ligne
+CMD ./init-ssl.sh && dotnet API.dll
