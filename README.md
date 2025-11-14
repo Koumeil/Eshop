@@ -4,7 +4,6 @@
   <img src="https://img.shields.io/github/actions/workflow/status/koumeil/eshop/ci-cd.yml?branch=main&label=CI%2FCD&logo=github&style=flat-square" alt="GitHub Actions"> 
   <img src="https://img.shields.io/badge/Container-GHCR.io-blue?logo=docker&style=flat-square" alt="GHCR"> 
   <img src="https://img.shields.io/badge/.NET-8.0-blueviolet?logo=dotnet&style=flat-square" alt=".NET 8"> 
-  <img src="https://img.shields.io/github/license/koumeil/eshop?style=flat-square" alt="License"> 
 </p>
 
 ---
@@ -43,14 +42,17 @@ Le projet intègre un pipeline **CI/CD complet**, avec déploiement containeris�
 
 ### ⚙️ Stack Technique
 
-| Composant | Technologie |
-|------------|-------------|
-| **Backend** | .NET 8, ASP.NET Core, EF Core |
-| **Base de données** | PostgreSQL 16 |
-| **Frontend** | Application séparée (`frontend/`) |
-| **Sécurité** | JWT, HTTPS obligatoire |
-| **Containerisation** | Docker, Docker Compose |
-| **CI/CD** | GitHub Actions, GitHub Container Registry |
+| Composant / Domaine         | Technologie / Description |
+|-----------------------------|---------------------------|
+| **Backend**                 | .NET 8, ASP.NET Core, **Clean Architecture**, **DDD**, **MediatR**, Domain Events, Value Objects |
+| **Base de données**         | PostgreSQL 16, EF Core, migrations et seeds automatisés |
+| **Frontend**                | React (frontend/), TypeScript, consommation API REST, JWT + HTTPS |
+| **Sécurité**                | JWT Authentication, HTTPS obligatoire, rôles et claims, endpoints protégés |
+| **Containerisation**        | Docker + Docker Compose, volumes persistants, health checks, réseau sécurisé |
+| **CI/CD**                   | GitHub Actions, tests unitaires & intégration, Docker Build & Push GHCR |
+| **Tests & Qualité**         | xUnit, Moq, couverture code, tests migrations & seeds |
+| **Logging & Monitoring**    | Serilog, health checks, logs structurés |
+| **Architecture globale**    | Couches API / Application / Domain / Infrastructure, séparation claire des responsabilités |
 
 ---
 
