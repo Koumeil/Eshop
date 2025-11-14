@@ -12,6 +12,8 @@ ssl-certs/
 *.key
 *.pfx
 *.pem
+keys/
+
 
 # Dossier des certificats générés
 /https/
@@ -505,3 +507,4 @@ appsettings.json
 !appsettings.Development.json
 
 
+keys/
