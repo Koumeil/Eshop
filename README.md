@@ -1,9 +1,10 @@
 # 🛍️ EShop - Documentation Technique
 
-<p align="start">
-  <img src="https://img.shields.io/github/actions/workflow/status/koumeil/eshop/ci-cd.yml?branch=main&label=CI%2FCD&logo=github&style=flat-square" alt="GitHub Actions">
-  <img src="https://img.shields.io/badge/Container-GHCR.io-blue?logo=docker&style=flat-square" alt="GHCR">
-  <img src="https://img.shields.io/badge/.NET-8.0-blueviolet?logo=dotnet&style=flat-square" alt=".NET 8">
+<p align="start"> 
+  <img src="https://img.shields.io/github/actions/workflow/status/koumeil/eshop/ci-cd.yml?branch=main&label=CI%2FCD&logo=github&style=flat-square" alt="GitHub Actions"> 
+  <img src="https://img.shields.io/badge/Container-GHCR.io-blue?logo=docker&style=flat-square" alt="GHCR"> 
+  <img src="https://img.shields.io/badge/.NET-8.0-blueviolet?logo=dotnet&style=flat-square" alt=".NET 8"> 
+  <img src="https://img.shields.io/github/license/koumeil/eshop?style=flat-square" alt="License"> 
 </p>
 
 ---
@@ -19,14 +20,16 @@
    - [⚡ Installation](#-installation)
    - [🔐 Configuration SSL Automatique (Windows)](#-configuration-ssl-automatique-windows)
    - [⚡ Démarrage Rapide sans Docker Compose](#-démarrage-rapide-sans-docker-compose)
-4. [⚙️ Fonctionnalités Techniques](#️-fonctionnalités-techniques)
-5. [🔒 Sécurité](#-sécurité)
-6. [🔄 CI/CD Pipeline](#-cicd-pipeline)
-7. [🧰 Configuration Docker](#-configuration-docker)
-8. [🔐 Gestion SSL](#-gestion-ssl)
-9. [📊 Monitoring & Maintenance](#-monitoring--maintenance)
-10. [🎯 Points Clés](#-points-clés)
-11. [📜 Licence et Crédit](#-licence-et-crédit)
+4. [🛠️ Tester l’API via Swagger](#-tester-lapi-via-swagger)
+5. [⚙️ Fonctionnalités Techniques](#️-fonctionnalités-techniques)
+6. [🔒 Sécurité](#-sécurité)
+7. [🔄 CI/CD Pipeline](#-cicd-pipeline)
+8. [🧰 Configuration Docker](#-configuration-docker)
+9. [🔐 Gestion SSL](#-gestion-ssl)
+10. [📊 Monitoring & Maintenance](#-monitoring--maintenance)
+11. [🎯 Points Clés](#-points-clés)
+12. [📜 Licence et Crédit](#-licence-et-crédit)
+
 
 ---
 
@@ -144,6 +147,65 @@ Ce script fait automatiquement :
 ```bash 
 dotnet run --project src/API
 ```
+### 🛠️ Tester l’API via Swagger
+
+1️⃣ Ouvrir Swagger UI
+
+Swagger est disponible à l’URL suivante: 
+
+```bash 
+http://localhost:7002/swagger
+```
+
+2️⃣ Se connecter pour obtenir un JWT
+
+- Dans Swagger, cherche le controller Auth.
+
+- Ouvre la méthode POST /api/auth/login.
+
+- Clique sur Try it out.
+
+- Remplis le corps JSON avec les identifiants de test :
+
+```json 
+{
+  "email": "alice.martin@example.com",
+  "password": "Password123!"
+}
+```
+
+- Clique sur Execute.
+
+- Tu obtiendras une réponse JSON contenant le token JWT :
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+3️⃣ Utiliser le token pour tester les endpoints protégés
+
+Clique sur le bouton Authorize en haut à droite de Swagger UI !
+
+```css 
+[🔒 Authorize]
+```
+- Dans la popup, colle ton token avec le mot clé Bearer suivi d’un espace, puis ton token SANS les guillemets "" :
+
+```nginx 
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+⚠️ Sans guillemets, exactement comme ci-dessus.
+
+- Clique sur Authorize puis sur Close.
+
+4️⃣ Tester les endpoints
+
+Maintenant tous les endpoints protégés par [Authorize] sont accessibles.
+
+- Les utilisateurs classiques peuvent consulter et modifier leurs propres informations.
+
+- Les utilisateurs avec le rôle Admin peuvent voir tous les utilisateurs, supprimer des comptes, etc.
 
 
 | Service          | URL                                                              |
