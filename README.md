@@ -1,74 +1,73 @@
 # 🛍️ EShop - Documentation Technique
 
-<p align="center">
-  <img src="https://img.shields.io/github/actions/workflow/status/koumeil/eshop/ci-cd.yml?branch=main&label=CI%2FCD&logo=github&style=flat-square" alt="GitHub Actions"/>
-  <img src="https://img.shields.io/badge/Container-GHCR.io-blue?logo=docker&style=flat-square" alt="GHCR"/>
-  <img src="https://img.shields.io/badge/.NET-8.0-blueviolet?logo=dotnet&style=flat-square" alt=".NET 8"/>
-  <img src="https://img.shields.io/github/license/koumeil/eshop?style=flat-square" alt="License"/>
+<p align="start"> 
+  <img src="https://img.shields.io/github/actions/workflow/status/koumeil/eshop/ci-cd.yml?branch=main&label=CI%2FCD&logo=github&style=flat-square" alt="GitHub Actions"> 
+  <img src="https://img.shields.io/badge/Container-GHCR.io-blue?logo=docker&style=flat-square" alt="GHCR"> 
+  <img src="https://img.shields.io/badge/.NET-8.0-blueviolet?logo=dotnet&style=flat-square" alt=".NET 8"> 
+  <img src="https://img.shields.io/github/license/koumeil/eshop?style=flat-square" alt="License"> 
 </p>
 
 ---
 
-## 📌 Table des Matières
+## 🧭 Table des Matières
 
-- [Vue d'ensemble](#-vue-densemble)
-- [Architecture & Stack Technique](#-architecture--stack-technique)
-- [Structure du Projet](#-structure-du-projet)
-- [Démarrage Rapide](#-démarrage-rapide)
-  - [Prérequis](#-prérequis)
-  - [Installation Docker](#-installation-docker)
-  - [Démarrage sans Docker](#-démarrage-sans-docker)
-  - [Configuration SSL Windows](#-configuration-ssl-windows)
-- [Tester l’API avec Swagger](#-tester-lapi-avec-swagger)
-- [Fonctionnalités Clés](#-fonctionnalités-clés)
-- [Sécurité](#-sécurité)
-- [CI/CD & Pipeline](#-cicd--pipeline)
-- [Docker & Monitoring](#-docker--monitoring)
-- [Licence & Crédit](#-licence--crédit)
+1. [📋 Vue d'ensemble](#-vue-densemble)
+2. [🏗️ Architecture](#️-architecture)
+   - [⚙️ Stack Technique](#️-stack-technique)
+   - [🗂️ Structure du Projet](#️-structure-du-projet)
+3. [🚀 Démarrage Rapide](#-démarrage-rapide)
+   - [🧩 Prérequis](#-prérequis)
+   - [⚡ Installation avec Docker](#-installation-avec-docker)
+   - [🔐 Configuration SSL Automatique (Windows)](#-configuration-ssl-automatique-windows)
+   - [⚡ Démarrage Rapide sans Docker](#-démarrage-rapide-sans-docker)
+4. [🛠️ Tester l’API via Swagger](#-tester-lapi-via-swagger)
+5. [⚙️ Fonctionnalités Techniques](#️-fonctionnalités-techniques)
+6. [🔒 Sécurité](#-sécurité)
+7. [🔄 CI/CD Pipeline](#-cicd-pipeline)
+8. [🧰 Configuration Docker](#-configuration-docker)
+9. [🔐 Gestion SSL](#-gestion-ssl)
+10. [📊 Monitoring & Maintenance](#-monitoring--maintenance)
+11. [🎯 Points Clés](#-points-clés)
+12. [📜 Licence et Crédit](#-licence-et-crédit)
 
 ---
 
 ## 📋 Vue d'ensemble
 
-**EShop** est une plateforme e-commerce moderne, construite avec **.NET 8**, basée sur :
-
-- **Clean Architecture**
-- **Domain-Driven Design (DDD)**
-- **CI/CD automatisé**
-- **Containerisation Docker**
-- **HTTPS et JWT Security intégrés**
-
-Objectif : fournir un environnement prêt pour le développement et la production avec un minimum de configuration.
+**EShop** est une plateforme e-commerce moderne construite avec **.NET 8**, suivant les principes **Clean Architecture** et **Domain-Driven Design**.  
+Le projet intègre un pipeline **CI/CD complet**, avec déploiement containerisé et automatisé.
 
 ---
 
-## 🏗️ Architecture & Stack Technique
+## 🏗️ Architecture
 
-| Couche        | Technologie / Outils                |
-|---------------|-----------------------------------|
-| Backend       | .NET 8, ASP.NET Core, EF Core      |
-| Base de données | PostgreSQL 16                     |
-| Frontend      | Séparé (`frontend/`)               |
-| Authentification | JWT, HTTPS obligatoire           |
-| Containerisation | Docker, Docker Compose           |
-| CI/CD         | GitHub Actions, GHCR               |
+### ⚙️ Stack Technique
+
+| Composant | Technologie |
+|------------|-------------|
+| **Backend** | .NET 8, ASP.NET Core, EF Core |
+| **Base de données** | PostgreSQL 16 |
+| **Frontend** | Application séparée (`frontend/`) |
+| **Sécurité** | JWT, HTTPS obligatoire |
+| **Containerisation** | Docker, Docker Compose |
+| **CI/CD** | GitHub Actions, GitHub Container Registry |
 
 ---
 
-## 🗂️ Structure du Projet
+### 🗂️ Structure du Projet
 
 ```plaintext
 Eshop/
-├── .github/workflows/       # Pipelines CI/CD
-├── src/                     # Code source
-│   ├── API/                 # Couche Présentation
-│   ├── Application/         # Logique métier
-│   ├── Domain/              # Entités et Value Objects
-│   ├── Infrastructure/      # Persistance, migrations
-│   └── Tests/               # Tests unitaires
-├── frontend/                # Application frontend
-├── docs/                    # Documentation
-├── ssl-certs/               # Certificats auto-signés
+├── .github/workflows/     # Pipeline CI/CD
+├── src/                   # Code source .NET
+│   ├── API/              # Couche Présentation
+│   ├── Application/      # Logique métier
+│   ├── Domain/           # Entités, Value Objects
+│   ├── Infrastructure/   # Persistence, Migrations
+│   └── Tests/            # Tests unitaires
+├── frontend/             # Application frontend
+├── docs/                 # Documentation
+├── ssl-certs/            # Certificats auto-générés
 ├── docker-compose.yml
 ├── Dockerfile
 ├── init-ssl.sh
@@ -81,55 +80,63 @@ Eshop/
 
 ### 🧩 Prérequis
 
-- Docker Desktop + Docker Compose
-- Droits administrateur (Windows) pour SSL
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) si lancement sans Docker
+- 🐳 Docker Desktop (avec Docker Compose) pour la méthode Docker  
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) pour la méthode sans Docker  
+- PostgreSQL 16 ou version compatible  
+- PowerShell (Windows) ou terminal compatible  
+- Droits administrateur pour la configuration SSL  
 
 ---
 
-### ⚡ Installation Docker
+### ⚡ Installation avec Docker
 
 ```bash
+# 1️⃣ Cloner le dépôt
 git clone <repository>
+
+# 2️⃣ Se placer dans le dossier du projet
 cd Eshop
+
+# 3️⃣ Construire et démarrer les conteneurs
 docker-compose up --build
 ```
 
 ---
 
-### ⚡ Démarrage sans Docker
+### 🔐 Configuration SSL Automatique (Windows)
 
-Si vous ne souhaitez pas utiliser Docker, il est possible de lancer l’application et d’initialiser la base de données localement. Deux méthodes sont proposées : **via script PowerShell** ou **manuelle**.
+⚠️ Exécuter en tant qu’administrateur
 
----
-
-#### 🧩 Prérequis
-
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)  
-- PostgreSQL 16 ou compatible  
-- PowerShell (Windows) ou terminal compatible  
-- Droits suffisants pour créer la base de données  
+```bash
+first-run.bat
+```
 
 ---
 
-#### 1️⃣ Méthode recommandée : script PowerShell `setup-db.ps1`
+### ⚡ Démarrage Rapide sans Docker
+
+Si vous ne souhaitez pas utiliser Docker, vous pouvez lancer l’application et initialiser la base de données localement. Deux méthodes sont disponibles.
+
+---
+
+#### Méthode 1️⃣ : Script PowerShell `setup-db.ps1` (recommandée)
 
 Ce script automatise :
 
 - La restauration des packages NuGet
 - La création de la migration initiale (si elle n’existe pas)
-- L’application des migrations sur la base PostgreSQL
+- L’application des migrations sur PostgreSQL
 
 **Étapes :**
 
-1. Ouvrir PowerShell en mode Administrateur
-2. Autoriser l’exécution des scripts (si nécessaire, une seule fois) :
+1. Ouvrir PowerShell en Administrateur
+2. Autoriser l’exécution des scripts (si nécessaire, une seule fois) :
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-3. Exécuter le script d’initialisation :
+3. Exécuter le script :
 
 ```powershell
 .\setup-db.ps1
@@ -144,17 +151,15 @@ dotnet run --project src/API
 
 ---
 
-#### 2️⃣ Méthode manuelle : commandes EF Core
+#### Méthode 2️⃣ : Commandes EF Core manuelles
 
-Si vous préférez gérer les migrations manuellement :
-
-1. Se placer dans le dossier du projet :
+1. Se placer dans le dossier du projet :
 
 ```bash
 cd Eshop
 ```
 
-2. Créer la migration initiale (si elle n’existe pas) :
+2. Créer la migration initiale (si inexistante) :
 
 ```bash
 dotnet ef migrations add Initial -p src/Infrastructure -s src/API -o Migrations
@@ -174,68 +179,112 @@ dotnet run --project src/API
 
 ---
 
-✅ Les deux méthodes permettent d’avoir une base PostgreSQL prête, avec toutes les migrations appliquées et des seeds automatiques configurés.
+### 🛠️ Tester l’API via Swagger
 
+1️⃣ Ouvrir Swagger UI :  
 
-### 🔐 Configuration SSL Windows
-
-Exécuter en administrateur :
-
-```powershell
-first-run.bat
+```bash
+https://localhost:7002/swagger
 ```
 
-- Génère un certificat auto-signé
-- L’ajoute au store Windows
-- Assure HTTPS pour localhost et Docker
+2️⃣ Se connecter pour obtenir un JWT  
+
+- Dans Swagger, trouver le controller `Auth`
+- Ouvrir la méthode POST `/api/auth/login`
+- Cliquer sur `Try it out`
+- Remplir le corps JSON :
+
+```json
+{
+  "email": "alice.martin@example.com",
+  "password": "Password123!"
+}
+```
+
+- Cliquer sur `Execute`  
+- Copier le token JWT renvoyé :
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+3️⃣ Utiliser le token pour tester les endpoints protégés  
+
+- Cliquer sur le bouton **Authorize** en haut à droite de Swagger
+- Coller le token précédé de `Bearer ` (sans guillemets) :
+
+```text
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+- Cliquer sur **Authorize** puis **Close**  
+- Tous les endpoints protégés par `[Authorize]` sont maintenant accessibles  
+
+4️⃣ Tester les endpoints selon les rôles :
+
+- Utilisateurs classiques → consulter/éditer leurs données  
+- Admin → voir tous les utilisateurs, supprimer des comptes, etc.
+
+| Service          | URL                                                              |
+| ---------------- | ---------------------------------------------------------------- |
+| **Application**  | [https://localhost:7002](https://localhost:7002)                 |
+| **Swagger UI**   | [https://localhost:7002/swagger](https://localhost:7002/swagger) |
+| **Health Check** | [https://localhost:7002/health](https://localhost:7002/health)   |
+| **PostgreSQL**   | localhost:5432                                                   |
 
 ---
 
-## 🛠️ Tester l’API avec Swagger
+### ⚙️ Fonctionnalités Techniques
 
-Swagger UI : [https://localhost:7002/swagger](https://localhost:7002/swagger)
-
-1. POST `/api/auth/login` pour récupérer un JWT  
-2. Copier le token et cliquer sur **Authorize**  
-3. Tester les endpoints protégés  
-
----
-
-## ⚙️ Fonctionnalités Clés
-
-- Auto-initialisation DB + Seed
-- Health checks intégrés
-- HTTPS obligatoire
-- JWT Auth + rôles Admin/User
-- Logging structuré
-- CI/CD + Docker automatisé
+- ✅ Migrations Base de Données (avec retry logic)  
+- ✅ Peuplement via userSeeds.json  
+- ✅ Certificat SSL auto-signé avec SAN  
+- ✅ Health Checks intégrés  
 
 ---
 
-## 🔒 Sécurité
+### 🔒 Sécurité
 
-- HTTPS obligatoire (certificat SAN)
-- JWT Authentication
-- Validation via Value Objects
-- User roles : Admin / User
-
----
-
-## 🔄 CI/CD & Pipeline
-
-- Workflow : `.github/workflows/ci-cd.yml`
-- Étapes :
-  - Build & Test
-  - Publish
-  - Docker Build & Push → GHCR
-- Déclencheur : push sur `main`
+- HTTPS obligatoire  
+- Certificats SAN (localhost + host.docker.internal)  
+- JWT Authentication  
+- Value Objects avec validation métier intégrée  
 
 ---
 
-## 🐳 Docker & Monitoring
+### 🔄 CI/CD Pipeline
 
-- Services : `api` (.NET 8), `db` (PostgreSQL)
-- Health check :
+- Fichier : `.github/workflows/ci-cd.yml`  
+- Déclencheur : push sur la branche `main`  
+
+**Étapes principales :**
+
+- Setup Certificate – Décode le certificat depuis les secrets GitHub  
+- Build & Test – Restauration, compilation et tests  
+- Publish – Publication de l’application  
+- Docker Build & Push – Envoi vers GHCR  
+
+---
+
+### 🐳 Container Registry
+
+| Élément     | Détail                         |
+| ----------- | ------------------------------ |
+| **Images**  | `ghcr.io/koumeil/eshop:latest` |
+| **Tags**    | `latest`, `commit SHA`         |
+| **Secrets** | Certificat SSL + mot de passe  |
+
+---
+
+### 🧰 Configuration Docker
+
+- **Services Déployés** :  
+  - api → Application .NET 8 (HTTPS)  
+  - db → PostgreSQL 16 (volume persistant)  
+
+- **Health Checks** :
 
 ```yaml
 healthcheck:
@@ -243,15 +292,64 @@ healthcheck:
   interval: 3s
   timeout: 2s
   retries: 15
+  start_period: 5s
 ```
 
-- Logs : `docker-compose logs -f api`
-- Arrêt propre : `docker-compose down`
+- **Variables d’Environnement** :
+
+```yaml
+ASPNETCORE_URLS: https://+:7002
+ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=eshop
+```
 
 ---
 
-## 📜 Licence & Crédit
+### 🔐 Gestion SSL
 
-© 2025 – EShop Made with ❤️ by Koumeil  
-License : MIT
+- Script `init-ssl.sh` → génération certificat SAN, keystore PKCS12, ajout au store de confiance du conteneur  
+- Windows `first-run.bat` → extraction certificat, installation dans store Root Windows, redémarrage services cryptographiques  
 
+---
+
+### 📊 Monitoring & Maintenance
+
+```bash
+# Surveillance des logs
+docker-compose logs -f api
+
+# Arrêt propre
+docker-compose down
+
+# Nettoyage complet
+docker-compose down -v
+
+# Statut des services
+docker-compose ps
+```
+
+- Health endpoints : `GET /health` → état de l’application et base  
+- Logs structurés avec niveaux de sévérité  
+
+---
+
+### 🎯 Points Clés
+
+| 💡 Objectif              | 🧩 Description                  |
+| ------------------------ | -------------------------------- |
+| **Zero Configuration**   | Démarrage immédiat après clone   |
+| **HTTPS First**          | Sécurité par défaut              |
+| **Automation Complete**  | DB, SSL, Seeds automatiques      |
+| **Production Ready**     | CI/CD, Health Checks, Monitoring |
+| **Developer Experience** | Environnement cohérent dev/prod  |
+
+---
+
+### 🔔 Note
+
+Le certificat SSL est auto-signé → les navigateurs afficheront un avertissement.  
+Exécutez `first-run.bat` pour l’ajouter au store de confiance Windows.
+
+---
+
+### © 2025 – EShop Made with ❤️ by Koumeil
