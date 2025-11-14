@@ -4,6 +4,7 @@
   <img src="https://img.shields.io/github/actions/workflow/status/koumeil/eshop/ci-cd.yml?branch=main&label=CI%2FCD&logo=github&style=flat-square" alt="GitHub Actions">
   <img src="https://img.shields.io/badge/Container-GHCR.io-blue?logo=docker&style=flat-square" alt="GHCR">
   <img src="https://img.shields.io/badge/.NET-8.0-blueviolet?logo=dotnet&style=flat-square" alt=".NET 8">
+  <img src="https://img.shields.io/github/license/koumeil/eshop?style=flat-square" alt="License">
 </p>
 
 ---
