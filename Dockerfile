@@ -31,4 +31,4 @@ RUN chmod +x init-ssl.sh
 EXPOSE 7002
 
 # ✅ Command
-CMD ./init-ssl.sh && dotnet API.dll
+CMD ["sh", "-c", "./init-ssl.sh && dotnet API.dll"]
