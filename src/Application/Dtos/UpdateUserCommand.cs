@@ -12,4 +12,3 @@ public class UpdateUserCommand
     public string? PostalCode { get; init; }
     public string? Country { get; init; }
 }
-

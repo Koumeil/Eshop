@@ -47,7 +47,8 @@ openssl x509 -in /https/aspnetapp.crt -text -noout | grep -A 5 "Subject Alternat
 openssl pkcs12 -export -out /https/aspnetapp.pfx \
     -inkey /https/aspnetapp.key \
     -in /https/aspnetapp.crt \
-    -passout pass:
+    -passout pass:${CERT_PASSWORD}
+
 
 echo "✅ PKCS12 créé"
 

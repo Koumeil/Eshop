@@ -11,8 +11,19 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<UserEntity> Users => Set<UserEntity>();
+    public DbSet<RefreshTokenEntity> RefreshTokens => Set<RefreshTokenEntity>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // RefreshTokenEntity
+        modelBuilder.Entity<RefreshTokenEntity>(entity =>
+        {
+            entity.HasKey(rt => rt.Id);
+            entity.Property(rt => rt.Token).IsRequired();
+            entity.Property(rt => rt.ExpiryDate).IsRequired();
+            entity.Property(rt => rt.IsRevoked).IsRequired();
+        });
+
+        // UserEntity
         modelBuilder.Entity<UserEntity>(builder =>
         {
             builder.Property(u => u.Email)
