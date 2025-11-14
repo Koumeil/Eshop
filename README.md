@@ -30,7 +30,6 @@
 11. [🎯 Points Clés](#-points-clés)
 12. [📜 Licence et Crédit](#-licence-et-crédit)
 
-
 ---
 
 ## 📋 Vue d'ensemble
@@ -76,6 +75,7 @@ Eshop/
 ```
 
 ### 🚀 Démarrage Rapide avec Docker
+
 ## 🧩 Prérequis
 
 - 🐳 Docker Desktop (avec Docker Compose)
@@ -104,16 +104,12 @@ first-run.bat
 
 ### ⚡ Démarrage Rapide sans Docker Compose
 
----
-
 #### 🧩 Prérequis
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - PostgreSQL 16 ou version compatible
 - PowerShell (Windows) ou terminal compatible
 - Droits suffisants pour créer la base de données
-
----
 
 #### 🛠️ Étapes de configuration
 
@@ -134,12 +130,11 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 # Exécuter le script d'initialisation (Administrateur)
 .\setup-db.ps1
 ```
+
 Ce script fait automatiquement :
 
 - La restauration des packages NuGet
-
 - La création de la migration initiale (si elle n'existe pas)
-
 - L'application des migrations sur votre base PostgreSQL
 
 3️⃣ Démarrer l’API localement :
@@ -147,6 +142,7 @@ Ce script fait automatiquement :
 ```bash 
 dotnet run --project src/API
 ```
+
 ### 🛠️ Tester l’API via Swagger
 
 1️⃣ Ouvrir Swagger UI
@@ -154,17 +150,14 @@ dotnet run --project src/API
 Swagger est disponible à l’URL suivante: 
 
 ```bash 
-http://localhost:7002/swagger
+https://localhost:7002/swagger
 ```
 
 2️⃣ Se connecter pour obtenir un JWT
 
 - Dans Swagger, cherche le controller Auth.
-
 - Ouvre la méthode POST /api/auth/login.
-
 - Clique sur Try it out.
-
 - Remplis le corps JSON avec les identifiants de test :
 
 ```json 
@@ -175,7 +168,6 @@ http://localhost:7002/swagger
 ```
 
 - Clique sur Execute.
-
 - Tu obtiendras une réponse JSON contenant le token JWT :
 ```json
 {
@@ -190,11 +182,13 @@ Clique sur le bouton Authorize en haut à droite de Swagger UI !
 ```css 
 [🔒 Authorize]
 ```
+
 - Dans la popup, colle ton token avec le mot clé Bearer suivi d’un espace, puis ton token SANS les guillemets "" :
 
 ```nginx 
 Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
+
 ⚠️ Sans guillemets, exactement comme ci-dessus.
 
 - Clique sur Authorize puis sur Close.
@@ -204,9 +198,7 @@ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 Maintenant tous les endpoints protégés par [Authorize] sont accessibles.
 
 - Les utilisateurs classiques peuvent consulter et modifier leurs propres informations.
-
 - Les utilisateurs avec le rôle Admin peuvent voir tous les utilisateurs, supprimer des comptes, etc.
-
 
 | Service          | URL                                                              |
 | ---------------- | ---------------------------------------------------------------- |
@@ -215,8 +207,8 @@ Maintenant tous les endpoints protégés par [Authorize] sont accessibles.
 | **Health Check** | [https://localhost:7002/health](https://localhost:7002/health)   |
 | **PostgreSQL**   | localhost:5432                                                   |
 
-
 ### ⚙️ Fonctionnalités Techniques
+
 ### 🧠 Initialisation Automatique
 
 - ✅ Migrations Base de Données (avec retry logic)
@@ -224,34 +216,26 @@ Maintenant tous les endpoints protégés par [Authorize] sont accessibles.
 - ✅ Certificat SSL auto-signé avec SAN
 - ✅ Health Checks intégrés
 
-
 ### 🔒 Sécurité
 
 - HTTPS obligatoire (aucun endpoint HTTP)
-
 - Certificats SAN (localhost + host.docker.internal)
-
 - JWT Authentication
-
 - Value Objects avec validation métier intégrée
 
 ### 🔄 CI/CD Pipeline
+
 ### 📁 Workflow
 
 - Fichier : .github/workflows/ci-cd.yml
-
 - Déclencheur : push sur la branche main
 
 ### 🧱 Étapes principales
 
 - Setup Certificate – Décode le certificat depuis les secrets GitHub
-
 - Build & Test – Restauration, compilation et exécution des tests
-
 - Publish – Publication de l’application
-
 - Docker Build & Push – Envoi vers GHCR
-
 
 ### 🐳 Container Registry
 
@@ -266,7 +250,6 @@ Maintenant tous les endpoints protégés par [Authorize] sont accessibles.
 ### 🔧 Services Déployés
 
 - api → Application .NET 8 (HTTPS)
-
 - db → PostgreSQL 16 (volume persistant)
 
 ### 💓 Health Checks
@@ -289,24 +272,21 @@ ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=eshop
 ```
 
 ### 🔐 Gestion SSL
+
 ### 🧾 Script d’Initialisation (init-ssl.sh)
 
 - Génération du certificat avec SAN
-
 - Création du keystore PKCS12
-
 - Ajout au store de confiance du conteneur
 
 ### 🪟 Configuration Windows (first-run.bat)
 
 - Extraction du certificat depuis le conteneur
-
 - Installation dans le store Root Windows
-
 - Redémarrage des services cryptographiques
 
-
 ### 📊 Monitoring & Maintenance
+
 ### 🔍 Commandes Utiles
 
 ```bash
@@ -323,10 +303,9 @@ docker-compose down -v
 docker-compose ps
 ```
 
-###  🩺 Health Endpoints
+### 🩺 Health Endpoints
 
 - GET /health → État de l’application et de la base de données
-
 - Logs structurés avec niveaux de sévérité
 
 ### 🎯 Points Clés
@@ -339,10 +318,7 @@ docker-compose ps
 | **Production Ready**     | CI/CD, Health Checks, Monitoring |
 | **Developer Experience** | Environnement cohérent dev/prod  |
 
-
 ### 🔔 Note : Le certificat SSL étant auto-signé, les navigateurs afficheront un avertissement de sécurité.
 - Exécute first-run.bat pour l’ajouter au store de confiance Windows.
 
-
 ### © 2025 – EShop Made with ❤️ by Koumeil
-
