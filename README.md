@@ -73,7 +73,7 @@ Eshop/
 └── first-run.bat
 ```
 
-### 🚀 Démarrage Rapide
+### 🚀 Démarrage Rapide avec Docker
 ## 🧩 Prérequis
 
 - 🐳 Docker Desktop (avec Docker Compose)
@@ -99,6 +99,53 @@ docker-compose up --build
 ```bash
 first-run.bat
 ```
+
+### ⚡ Démarrage Rapide sans Docker Compose
+
+---
+
+#### 🧩 Prérequis
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- PostgreSQL 16 ou version compatible
+- PowerShell (Windows) ou terminal compatible
+- Droits suffisants pour créer la base de données
+
+---
+
+#### 🛠️ Étapes de configuration
+
+1️⃣ **Cloner le dépôt :**
+```bash
+git clone <repository>
+cd Eshop
+```
+
+2️⃣ **Initialiser la base de données localement (sans Docker)**  
+
+Si vous ne souhaitez pas utiliser Docker ou Docker Compose, vous pouvez lancer le script PowerShell fourni pour préparer votre base de données et appliquer les migrations :
+
+```powershell
+# Autoriser l'exécution des scripts si nécessaire (une seule fois) Administrateur
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Exécuter le script d'initialisation (Administrateur)
+.\setup-db.ps1
+```
+Ce script fait automatiquement :
+
+- La restauration des packages NuGet
+
+- La création de la migration initiale (si elle n'existe pas)
+
+- L'application des migrations sur votre base PostgreSQL
+
+3️⃣ Démarrer l’API localement :
+
+```bash 
+dotnet run --project src/API
+```
+
 
 | Service          | URL                                                              |
 | ---------------- | ---------------------------------------------------------------- |
