@@ -14,7 +14,6 @@ ssl-certs/
 *.pem
 keys/
 
-
 # Dossier des certificats générés
 /https/
 

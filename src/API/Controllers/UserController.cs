@@ -3,12 +3,15 @@ using Application.Dtos;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Vo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Authorize]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -18,37 +21,22 @@ public class UsersController : ControllerBase
         _userService = userService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<List<UserDto>>> GetAll()
-    {
-        var users = await _userService.GetAllAsync();
-        var dtos = users.ConvertAll(UserDto.FromEntity);
-        return Ok(dtos);
-    }
+    // Helper 
+    private Guid GetCurrentUserId() =>
+        Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)
+                   ?? throw new UnauthorizedAccessException("Utilisateur non authentifié"));
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<UserDto>> GetById(Guid id)
+    // GET /api/users/me 
+    [HttpGet("me")]
+    public async Task<ActionResult<UserDto>> GetCurrentUserProfile()
     {
-        var user = await _userService.GetByIdAsync(id);
+        var user = await _userService.GetByIdAsync(GetCurrentUserId());
         return Ok(UserDto.FromEntity(user));
     }
 
-    [HttpPost]
-    public async Task<ActionResult<UserDto>> Create(CreateUserDto dto)
-    {
-        var address = new Address(dto.Street, dto.City, dto.PostalCode, dto.Country);
-        var email = new EmailAddress(dto.Email);
-        var phone = new PhoneNumber(dto.PhoneNumber);
-        var password = new Password(dto.Password);
-
-        var newUser = new UserEntity(dto.FirstName, dto.LastName, address, email, phone, password);
-        var createdUser = await _userService.CreateAsync(newUser);
-
-        return CreatedAtAction(nameof(GetById), new { id = createdUser.Id }, UserDto.FromEntity(createdUser));
-    }
-
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult<UserDto>> Update(Guid id, UpdateUserDto dto)
+    // PATCH /api/users/me/profile 
+    [HttpPatch("me/profile")]
+    public async Task<ActionResult<UserDto>> UpdateProfile(UpdateUserDto dto)
     {
         var command = new UpdateUserCommand
         {
@@ -63,30 +51,24 @@ public class UsersController : ControllerBase
             Country = dto.Country
         };
 
-        var updatedUser = await _userService.UpdateAsync(id, command);
+        var updatedUser = await _userService.UpdateAsync(GetCurrentUserId(), command);
         return Ok(UserDto.FromEntity(updatedUser));
     }
 
- 
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id)
-    {
-        await _userService.DeleteAsync(id);
-        return NoContent();
-    }
-
-    [HttpPatch("{id:guid}/email")]
-    public async Task<ActionResult<UserDto>> UpdateEmail(Guid id, UpdateEmailDto dto)
+    // PATCH /api/users/me/email 
+    [HttpPatch("me/email")]
+    public async Task<ActionResult<UserDto>> UpdateEmail(UpdateEmailDto dto)
     {
         var newEmail = new EmailAddress(dto.Email);
-        var updatedUser = await _userService.UpdateEmailAsync(id, newEmail);
+        var updatedUser = await _userService.UpdateEmailAsync(GetCurrentUserId(), newEmail);
         return Ok(UserDto.FromEntity(updatedUser));
     }
 
-    [HttpPatch("{id:guid}/password")]
-    public async Task<ActionResult<UserDto>> UpdatePassword(Guid id, UpdatePasswordDto dto)
+    // PATCH /api/users/me/password 
+    [HttpPatch("me/password")]
+    public async Task<ActionResult<UserDto>> UpdatePassword(UpdatePasswordDto dto)
     {
-        var updatedUser = await _userService.UpdatePasswordAsync(id, dto.NewPassword);
+        var updatedUser = await _userService.UpdatePasswordAsync(GetCurrentUserId(), dto.NewPassword);
         return Ok(UserDto.FromEntity(updatedUser));
     }
 }

@@ -25,6 +25,8 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IAdminUserRepository, AdminUserRepository>();
 
         return services;
     }

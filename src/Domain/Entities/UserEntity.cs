@@ -11,13 +11,13 @@ public sealed class UserEntity : BaseEntity
     #endregion
 
     #region Properties
-    public  string FirstName { get; private set; }
+    public string FirstName { get; private set; }
     public string LastName { get; private set; }
     public EmailAddress Email { get; private set; }
     public Address Address { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
     public Password Password { get; private set; }
-    public Role Role { get; private init; }
+    public Role Role { get; private set; }
     public DateTime? LastLoginDate { get; private set; }
     public string FullName => $"{FirstName} {LastName}";
     #endregion
@@ -59,9 +59,9 @@ public sealed class UserEntity : BaseEntity
         MarkAsUpdated();
     }
 
-    public bool VerifyPassword(string plainTextPassword)
+    public bool VerifyPassword(string plainTextPassword, string hashedJson)
     {
-        return Password.Verify(plainTextPassword);
+        return Password.Verify(plainTextPassword, hashedJson);
     }
 
     public void UpdateEmail(EmailAddress newEmail)
@@ -94,6 +94,18 @@ public sealed class UserEntity : BaseEntity
         LastLoginDate = DateTime.UtcNow;
         MarkAsUpdated();
     }
+
+    public void SetRole(string newRole)
+    {
+        var allowedRoles = new[] { Role.Admin, Role.User, Role.Manager };
+        
+        if (!Array.Exists(allowedRoles, r => r.Equals(newRole)))
+            throw new DomainValidationException($"Role '{newRole}' is not allowed.");
+
+        Role = new Role(newRole);
+        MarkAsUpdated();
+    }
+
 
     #endregion
 

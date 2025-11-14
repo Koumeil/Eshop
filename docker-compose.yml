@@ -23,7 +23,7 @@ services:
 
     # ✅ HEALTH CHECK 
     healthcheck:
-      test: [ "CMD", "stat", "/https/aspnetapp.pfx" ] # Vérifie que le cert existe
+      test: [ "CMD", "stat", "/https/aspnetapp.cert" ] # Vérifie que le cert existe
       interval: 3s
       timeout: 2s
       retries: 15

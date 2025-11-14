@@ -72,10 +72,9 @@ public class ApplicationDbContext : DbContext
 
             //Password
             builder.Property(u => u.Password)
-                .HasConversion(
-                    p => p.HashedValue,
-                    value => new Password(value)
-                )
+               .HasConversion(
+                    v => v.HashedValue,
+                    v => new Password(v, true))
                 .HasMaxLength(200)
                 .IsRequired();
 

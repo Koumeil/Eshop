@@ -12,7 +12,7 @@ namespace Tests;
 
 public class AuthServiceTests
 {
-    private readonly Mock<IUserRepository> _userRepoMock = new();
+    private readonly Mock<IAuthRepository> _authRepository = new();
     private readonly Mock<IRefreshTokenRepository> _refreshRepoMock = new();
     private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     private readonly JwtSettings _jwtSettings = new()
@@ -25,7 +25,7 @@ public class AuthServiceTests
     };
 
     private AuthService CreateService() =>
-        new AuthService(_userRepoMock.Object, _refreshRepoMock.Object, _unitOfWorkMock.Object, _jwtSettings);
+        new AuthService(_authRepository.Object, _refreshRepoMock.Object, _unitOfWorkMock.Object, _jwtSettings);
 
 
     // TEST REGISTER
@@ -44,7 +44,7 @@ public class AuthServiceTests
         "Belgique"
         );
 
-        _userRepoMock.Setup(r => r.ExistsByEmailAsync(It.Is<EmailAddress>(e => e.Value == dto.Email)))
+        _authRepository.Setup(r => r.ExistsByEmailAsync(It.Is<EmailAddress>(e => e.Value == dto.Email)))
             .ReturnsAsync(false);
 
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -78,7 +78,7 @@ public class AuthServiceTests
             "Belgique"
         );
 
-        _userRepoMock.Setup(r => r.ExistsByEmailAsync(It.Is<EmailAddress>(e => e.Value == dto.Email)))
+        _authRepository.Setup(r => r.ExistsByEmailAsync(It.Is<EmailAddress>(e => e.Value == dto.Email)))
             .ReturnsAsync(true);
 
         var service = CreateService();
@@ -100,7 +100,7 @@ public class AuthServiceTests
             new Password("Password@123")
         );
 
-        _userRepoMock.Setup(r => r.FindByEmailAsync(new EmailAddress("test@example.com")))
+        _authRepository.Setup(r => r.FindByEmailAsync(new EmailAddress("test@example.com")))
             .ReturnsAsync(user);
 
         var service = CreateService();
@@ -132,7 +132,7 @@ public class AuthServiceTests
             new Password("Passwor@d123")
         );
 
-        _userRepoMock.Setup(r => r.FindByEmailAsync(new EmailAddress("test@example.com")))
+        _authRepository.Setup(r => r.FindByEmailAsync(new EmailAddress("test@example.com")))
             .ReturnsAsync(user);
 
         var service = CreateService();
@@ -171,7 +171,7 @@ public class AuthServiceTests
         _refreshRepoMock.Setup(r => r.GetByTokenAsync("valid-refresh-token"))
             .ReturnsAsync(validToken);
 
-        _userRepoMock.Setup(r => r.FindByIdAsync(user.Id))
+        _authRepository.Setup(r => r.FindByIdAsync(user.Id))
             .ReturnsAsync(user);
 
         _unitOfWorkMock.Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))

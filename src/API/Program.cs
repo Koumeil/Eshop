@@ -5,6 +5,7 @@ using Asp.Versioning;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -66,6 +67,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+});
+
 // API Versioning
 builder.Services.AddApiVersioning(options =>
 {
@@ -85,6 +91,31 @@ builder.Services.AddSwaggerGen(options =>
         Description = "E-Commerce Platform API"
     });
 
+    // JWT Authentication
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Entrez 'Bearer {token}'",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
@@ -92,6 +123,7 @@ builder.Services.AddSwaggerGen(options =>
         options.IncludeXmlComments(xmlPath);
     }
 });
+
 
 // Health Checks
 builder.Services.AddHealthChecks();
@@ -129,6 +161,37 @@ if (!app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+
+// ---------------------
+// Transform 401/403 en ProblemDetails
+// ---------------------
+app.UseStatusCodePages(async context =>
+{
+    var response = context.HttpContext.Response;
+
+    if (response.StatusCode == StatusCodes.Status401Unauthorized ||
+        response.StatusCode == StatusCodes.Status403Forbidden)
+    {
+        response.ContentType = "application/problem+json";
+
+        var problemDetails = new ProblemDetails
+        {
+            Status = response.StatusCode,
+            Title = response.StatusCode == 401 ? "Unauthorized" : "Forbidden",
+            Detail = response.StatusCode == 401 ?
+                     "You are not authenticated" :
+                     "You do not have permission to access this resource",
+            Type = $"https://httpstatuses.com/{response.StatusCode}",
+            Instance = context.HttpContext.Request.Path
+        };
+
+        await response.WriteAsJsonAsync(problemDetails);
+    }
+});
+
+
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapHealthChecks("/health");

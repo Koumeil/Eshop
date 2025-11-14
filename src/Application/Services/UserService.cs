@@ -6,121 +6,71 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Vo;
 
-namespace Application.Services;
-
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork)
+    private readonly ICurrentUserService _currentUserService;
+
+    public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _currentUserService = currentUserService;
     }
 
-    public async Task<List<UserEntity>> GetAllAsync()
+    public async Task<UserEntity> GetByIdAsync(Guid userId)
     {
-        var users = await _userRepository.GetAllAsync();
-        return users.Count > 0 ? users : new List<UserEntity>();
+        return await _userRepository.FindByIdAsync(userId)
+            ?? throw new NotFoundException("User", userId);
     }
 
-
-    public async Task<UserEntity> GetByIdAsync(Guid id)
+    public async Task<UserEntity> UpdateAsync(Guid userId, UpdateUserCommand cmd)
     {
-        return await _userRepository.FindByIdAsync(id)
-            ?? throw new NotFoundException("User", id);
-    }
-
-    public async Task<UserEntity> CreateAsync(UserEntity user)
-    {
-        if (await _userRepository.ExistsByEmailAsync(user.Email))
-            throw new ConflictException($"User with email '{user.Email.Value}' already exists.");
-
-        _userRepository.Add(user);
-
-        await _unitOfWork.SaveChangesAsync();
-        return user;
-    }
-    public async Task<UserEntity> UpdateAsync(Guid id, UpdateUserCommand cmd)
-    {
-        var existingUser = await _userRepository.FindByIdAsync(id);
-
-        if (existingUser is null)
-            throw new NotFoundException("User", id);
+        var user = await _userRepository.FindByIdAsync(userId)
+                   ?? throw new NotFoundException("User", userId);
 
         if (cmd.FirstName != null || cmd.LastName != null)
-        {
-            var firstName = cmd.FirstName ?? existingUser.FirstName;
-            var lastName = cmd.LastName ?? existingUser.LastName;
-            existingUser.UpdateName(firstName, lastName);
-        }
+            user.UpdateName(cmd.FirstName ?? user.FirstName, cmd.LastName ?? user.LastName);
 
         if (cmd.Email != null)
-        {
-            var newEmail = new EmailAddress(cmd.Email);
-            if (existingUser.Email.Value != newEmail.Value &&
-                await _userRepository.ExistsByEmailAsync(newEmail))
-                throw new ConflictException("User", newEmail.Value);
-
-            existingUser.UpdateEmail(newEmail);
-        }
+            await UpdateEmailAsync(userId, new EmailAddress(cmd.Email));
 
         if (cmd.PhoneNumber != null)
-            existingUser.UpdatePhone(new PhoneNumber(cmd.PhoneNumber));
+            user.UpdatePhone(new PhoneNumber(cmd.PhoneNumber));
 
         if (cmd.Password != null)
-            existingUser.SetPassword(cmd.Password);
+            user.SetPassword(cmd.Password);
 
         if (cmd.Street != null || cmd.City != null || cmd.PostalCode != null || cmd.Country != null)
         {
             var newAddress = new Address(
-                cmd.Street ?? existingUser.Address.Street,
-                cmd.City ?? existingUser.Address.City,
-                cmd.PostalCode ?? existingUser.Address.PostalCode,
-                cmd.Country ?? existingUser.Address.Country
+                cmd.Street ?? user.Address.Street,
+                cmd.City ?? user.Address.City,
+                cmd.PostalCode ?? user.Address.PostalCode,
+                cmd.Country ?? user.Address.Country
             );
-            existingUser.UpdateAddress(newAddress);
+            user.UpdateAddress(newAddress);
         }
 
-        _userRepository.Update(existingUser);
+        _userRepository.Update(user);
         await _unitOfWork.SaveChangesAsync();
 
-        return existingUser;
+        return user;
     }
-
-
-    public async Task DeleteAsync(Guid id)
-    {
-        var user = await _userRepository.FindByIdAsync(id);
-        if (user is null)
-            throw new NotFoundException("User", id);
-
-        _userRepository.Remove(user);
-        await _unitOfWork.SaveChangesAsync();
-    }
-
-
 
     public async Task<UserEntity> UpdateEmailAsync(Guid userId, EmailAddress newEmail)
     {
-        if (newEmail is null)
-            throw new DomainValidationException("Email cannot be null.");
+        if (newEmail is null) throw new DomainValidationException("Email cannot be null.");
 
-        var user = await _userRepository.FindByIdAsync(userId);
-        if (user is null)
-            throw new NotFoundException("User", userId);
+        var user = await _userRepository.FindByIdAsync(userId)
+                   ?? throw new NotFoundException("User", userId);
 
-        if (user.Email.Value != newEmail.Value)
-        {
-            if (await _userRepository.ExistsByEmailAsync(newEmail))
-                throw new ConflictException("User", newEmail.Value);
-
-            user.UpdateEmail(newEmail);
-
-            _userRepository.Update(user);
-            await _unitOfWork.SaveChangesAsync();
-        }
+        // Ici on peut enlever ExistsByEmailAsync si on considère que l'email du user est unique
+        user.UpdateEmail(newEmail);
+        _userRepository.Update(user);
+        await _unitOfWork.SaveChangesAsync();
 
         return user;
     }
@@ -130,16 +80,25 @@ public class UserService : IUserService
         if (string.IsNullOrWhiteSpace(newPassword))
             throw new DomainValidationException("Password cannot be null or empty.");
 
-        var user = await _userRepository.FindByIdAsync(userId);
-        if (user is null)
-            throw new NotFoundException("User", userId);
+        var user = await _userRepository.FindByIdAsync(userId)
+                   ?? throw new NotFoundException("User", userId);
 
         user.SetPassword(newPassword);
-
         _userRepository.Update(user);
         await _unitOfWork.SaveChangesAsync();
 
         return user;
     }
+    public async Task DeleteOwnAccountAsync()
+    {
+        var currentUser = await _currentUserService.GetCurrentUserAsync();
 
+        var user = await _userRepository.FindByIdAsync(currentUser.Id)
+                   ?? throw new NotFoundException("User", currentUser.Id);
+
+        _userRepository.Remove(user);
+        await _unitOfWork.SaveChangesAsync();
+
+        // Déconnexion / invalidation de session
+    }
 }

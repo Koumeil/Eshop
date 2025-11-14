@@ -1,94 +1,115 @@
 ﻿using Domain.DomainExceptions;
 using System.Security.Cryptography;
+using System.Text.Json;
 
 namespace Domain.Vo;
 
 public sealed record Password
 {
     private const int MinimumLength = 10;
+    private const int SaltSize = 16;
+    private const int HashSize = 32;
+    private const int Iterations = 310_000;
 
     public string HashedValue { get; }
 
     public Password(string rawPassword)
     {
         if (string.IsNullOrWhiteSpace(rawPassword))
-            throw new DomainValidationException("Password cannot be null or whitespace.");
+            throw new DomainValidationException("Password cannot be empty.");
 
         var trimmed = rawPassword.Trim();
+        ValidatePasswordRules(trimmed);
+        HashedValue = HashPassword(trimmed);
+    }
 
-        if (trimmed.Length < MinimumLength)
+    public Password(string hashedValue, bool isHashed)
+    {
+        HashedValue = hashedValue;
+    }
+
+    private static void ValidatePasswordRules(string password)
+    {
+        if (password.Length < MinimumLength)
             throw new DomainValidationException($"Password must be at least {MinimumLength} characters.");
 
-        if (!HasUppercase(trimmed))
+        if (!password.Any(char.IsUpper))
             throw new DomainValidationException("Password must contain at least one uppercase letter.");
 
-        if (!HasLowercase(trimmed))
+        if (!password.Any(char.IsLower))
             throw new DomainValidationException("Password must contain at least one lowercase letter.");
 
-        if (!HasDigit(trimmed))
+        if (!password.Any(char.IsDigit))
             throw new DomainValidationException("Password must contain at least one digit.");
 
-        if (!HasSpecialChar(trimmed))
-            throw new DomainValidationException("Password must contain at least one special character.");
-
-        HashedValue = ComputeHash(trimmed);
-    }
-
-    private static bool HasUppercase(string input) =>
-        input.Any(char.IsUpper);
-
-    private static bool HasLowercase(string input) =>
-        input.Any(char.IsLower);
-
-    private static bool HasDigit(string input) =>
-        input.Any(char.IsDigit);
-
-    private static bool HasSpecialChar(string input)
-    {
         const string specials = @"!@#$%^&*()-_=+[{]}\|;:'"",<.>/?";
-        return input.Any(c => specials.Contains(c));
+        if (!password.Any(c => specials.Contains(c)))
+            throw new DomainValidationException("Password must contain at least one special character.");
     }
 
-    private static string ComputeHash(string rawPassword)
+    private static string HashPassword(string password)
     {
-        var saltBytes = RandomNumberGenerator.GetBytes(16);
+        var salt = RandomNumberGenerator.GetBytes(SaltSize);
 
         using var deriveBytes = new Rfc2898DeriveBytes(
-            rawPassword,
-            saltBytes,
-            100_000,
-            HashAlgorithmName.SHA256
-        );
+            password,
+            salt,
+            Iterations,
+            HashAlgorithmName.SHA256);
 
-        var hashBytes = deriveBytes.GetBytes(32);
-        var base64Salt = Convert.ToBase64String(saltBytes);
-        var base64Hash = Convert.ToBase64String(hashBytes);
+        var hash = deriveBytes.GetBytes(HashSize);
 
-        return $"{base64Salt}:{base64Hash}";
+        var PasswordHashData = new PasswordHashData
+        {
+            v = 1,
+            i = Iterations,
+            s = Convert.ToBase64String(salt),
+            h = Convert.ToBase64String(hash)
+        };
+
+        return JsonSerializer.Serialize(PasswordHashData);
     }
 
-    public bool Verify(string plainText)
+    public static bool Verify(string plainText, string hashedJson)
     {
-        if (string.IsNullOrWhiteSpace(plainText))
+        if (string.IsNullOrWhiteSpace(plainText) || string.IsNullOrWhiteSpace(hashedJson))
             return false;
 
-        var parts = HashedValue.Split(':');
-        if (parts.Length != 2)
+        try
+        {
+            var info = JsonSerializer.Deserialize<PasswordHashData>(hashedJson);
+            if (info is null || info.v != 1)
+                return false;
+
+            string saltBase64 = info.s.Replace("\\u002B", "+");
+            string hashBase64 = info.h.Replace("\\u002B", "+");
+
+            var salt = Convert.FromBase64String(saltBase64);
+            var expectedHash = Convert.FromBase64String(hashBase64);
+
+            using var deriveBytes = new Rfc2898DeriveBytes(
+                plainText,
+                salt,
+                info.i,
+                HashAlgorithmName.SHA256);
+
+            var actualHash = deriveBytes.GetBytes(expectedHash.Length);
+
+            return CryptographicOperations.FixedTimeEquals(expectedHash, actualHash);
+        }
+        catch
+        {
             return false;
-
-        var saltBytes = Convert.FromBase64String(parts[0]);
-        var expectedHash = Convert.FromBase64String(parts[1]);
-
-        using var deriveBytes = new Rfc2898DeriveBytes(
-            plainText,
-            saltBytes,
-            100_000,
-            HashAlgorithmName.SHA256
-        );
-
-        var actualHash = deriveBytes.GetBytes(32);
-        return CryptographicOperations.FixedTimeEquals(expectedHash, actualHash);
+        }
     }
 
     public override string ToString() => "***";
+
+    private sealed class PasswordHashData
+    {
+        public int v { get; set; }
+        public int i { get; set; }
+        public string s { get; set; } = string.Empty;
+        public string h { get; set; } = string.Empty;
+    }
 }

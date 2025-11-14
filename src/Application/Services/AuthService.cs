@@ -1,7 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using Application.ApplicationExceptions;
 using Application.Dtos;
 using Application.Interfaces;
@@ -10,42 +6,51 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Vo;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Application.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IAuthRepository _authRepository;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly JwtSettings _jwtSettings;
 
-    public AuthService(IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IUnitOfWork unitOfWork, JwtSettings jwtSettings)
+    public AuthService(IAuthRepository authRepository, IRefreshTokenRepository refreshTokenRepository, IUnitOfWork unitOfWork, JwtSettings jwtSettings)
     {
-        _userRepository = userRepository;
+        _authRepository = authRepository;
         _refreshTokenRepository = refreshTokenRepository;
         _unitOfWork = unitOfWork;
         _jwtSettings = jwtSettings;
     }
 
-    public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
+    public async Task<AuthResponseDto> LoginAsync(LoginDto loginDto)
     {
-        var user = await _userRepository.FindByEmailAsync(new EmailAddress(dto.Email))
-            ?? throw new UnauthorizedAccessException("Invalid credentials");
+        var userEntity = await _authRepository.FindByEmailAsync(new EmailAddress(loginDto.Email));
 
-        if (!user.Password.Verify(dto.Password))
+        if (userEntity is null)
             throw new UnauthorizedAccessException("Invalid credentials");
 
-        var accessToken = GenerateJwtToken(user);
-        var refreshToken = GenerateRefreshToken();
+        bool isPasswordValid = Password.Verify(loginDto.Password, userEntity.Password.HashedValue);
+        if (!isPasswordValid)
+            throw new UnauthorizedAccessException("Invalid credentials");
 
-        await _refreshTokenRepository.AddAsync(new RefreshTokenEntity
+        string accessToken = GenerateJwtToken(userEntity);
+        string refreshToken = GenerateRefreshToken();
+
+        var refreshTokenEntity = new RefreshTokenEntity
         {
-            UserId = user.Id,
+            UserId = userEntity.Id,
             Token = refreshToken,
             ExpiryDate = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationDays),
             IsRevoked = false
-        });
+        };
+        await _refreshTokenRepository.AddAsync(refreshTokenEntity);
 
         return new AuthResponseDto
         {
@@ -58,7 +63,7 @@ public class AuthService : IAuthService
     public async Task<AuthResponseDto> RegisterAsync(CreateUserCommand dto)
     {
         var email = new EmailAddress(dto.Email);
-        if (await _userRepository.ExistsByEmailAsync(email))
+        if (await _authRepository.ExistsByEmailAsync(email))
             throw new ConflictException($"User with email '{email.Value}' already exists.");
 
         var address = new Address(dto.Street, dto.City, dto.PostalCode, dto.Country);
@@ -66,8 +71,8 @@ public class AuthService : IAuthService
         var password = new Password(dto.Password);
 
         var newUser = new UserEntity(dto.FirstName, dto.LastName, address, email, phone, password);
-        
-        _userRepository.Add(newUser);
+
+        _authRepository.Add(newUser);
         await _unitOfWork.SaveChangesAsync();
 
         var accessToken = GenerateJwtToken(newUser);
@@ -127,7 +132,7 @@ public class AuthService : IAuthService
         if (storedToken == null || storedToken.IsRevoked || storedToken.ExpiryDate < DateTime.UtcNow)
             throw new UnauthorizedAccessException("Invalid or expired refresh token");
 
-        var user = await _userRepository.FindByIdAsync(storedToken.UserId)
+        var user = await _authRepository.FindByIdAsync(storedToken.UserId)
             ?? throw new UnauthorizedAccessException("User not found");
 
         // Revoke old token

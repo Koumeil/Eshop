@@ -10,6 +10,10 @@ public static class ApplicationServiceCollectionExtensions
     {
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IAdminUserService, AdminUserService>();
+        services.AddHttpContextAccessor();
+
         return services;
     }
 }
