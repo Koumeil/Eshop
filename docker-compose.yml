@@ -2,39 +2,35 @@ services:
   api:
     build: .
     ports:
-      - "7002:7002" # HTTPS uniquement
+      - "7002:7002"
     env_file:
       - .env
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:7002
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=
-      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - JwtSettings__SecretKey=${JwtSettings__SecretKey}
-      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=eshop;Username=postgres;Password=password
+      - RUNNING_IN_DOCKER=true
+
 
     depends_on:
       - db
-    # ✅ Volume optionnel pour inspecter les certificats
     volumes:
       - ./ssl-certs:/https:rw
       - ./keys:/app/keys
-
-    # ✅ HEALTH CHECK 
     healthcheck:
-      test: [ "CMD", "stat", "/https/aspnetapp.cert" ] # Vérifie que le cert existe
-      interval: 3s
-      timeout: 2s
+      test: ["CMD", "stat", "/https/aspnetapp.pfx"]
+      interval: 5s
+      timeout: 3s
       retries: 15
       start_period: 5s
 
   db:
     image: postgres:16
     environment:
-      - POSTGRES_DB=eshop
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:

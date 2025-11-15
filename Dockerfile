@@ -32,3 +32,6 @@ EXPOSE 7002
 
 # ✅ Command
 CMD ["sh", "-c", "./init-ssl.sh && dotnet API.dll"]
+
+
+

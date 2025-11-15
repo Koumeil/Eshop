@@ -2,6 +2,7 @@ using API.Middleware;
 using Application;
 using Application.Settings;
 using Asp.Versioning;
+using DotNetEnv;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
@@ -14,21 +15,26 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // =====================
 // Configuration
 // =====================
-// Add secrets and environment variables
+
+Env.Load("../../.env");
+
 builder.Configuration
-    .AddUserSecrets<Program>(optional: true)
-    .AddEnvironmentVariables();
+       .AddEnvironmentVariables();
+
+Console.WriteLine($"ENV: {builder.Environment.EnvironmentName}");
+Console.WriteLine($"DEV_DefaultConnection: {builder.Configuration["DEV_DefaultConnection"]}");
 
 // =====================
 // Services Registration
 // =====================
-builder.Services.AddInfrastructure(builder.Configuration); // Infrastructure layer
-builder.Services.AddApplication();                          // Application layer
+builder.Services.AddInfrastructure(builder.Configuration); 
+builder.Services.AddApplication();                        
 
 // Controllers with JSON options
 builder.Services.AddControllers()
