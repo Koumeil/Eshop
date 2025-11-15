@@ -1,0 +1,60 @@
+# 🔒 Sécurité : fichiers sensibles
+*.env
+*.pfx
+*.db
+*.key
+*.crt
+Key/
+secrets.*
+values.*
+
+# 🧹 Fichiers inutiles pour le build
+*.user
+*.suo
+*.log
+*.jfm
+*.dbmdl
+*.vspscc
+*.vssscc
+
+# 📦 Dossiers de build et IDE
+bin/
+obj/
+.vs/
+.vscode/
+.idea/
+node_modules/
+charts/
+
+# 🧪 Fichiers de test ou de debug
+npm-debug.log
+coverage/
+TestResults/
+
+# 📁 Fichiers de configuration inutiles dans l’image
+.dockerignore
+.gitignore
+.gitattributes
+.git/
+LICENSE
+README.md
+azds.yaml
+docker-compose*
+Dockerfile*
+
+# 🧰 Fichiers de projet non nécessaires
+*.csproj.user
+*.sln.docstates
+*.sln.ide
+*.sln.cache
+*.sln.metaproj
+*.sln*
+*.proj*
+*.targets
+*.props
+
+# 🧪 Java / autres techs (si pas utilisées, à retirer)
+.classpath
+.project
+.settings/
+.toolstarget/
